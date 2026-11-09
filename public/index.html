@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>QalaMu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--green:#1d5c1d;--green2:#2f7a2f;--ink:#12121f;--teal:#1b4d3e;--gray:#e9e9e9;--beige:#d8bf99;--bg:#f4f4f4;--ease:cubic-bezier(.22,.8,.3,1)}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+body{font-family:Jost,"Segoe UI",sans-serif;background:var(--bg);display:flex;justify-content:center;align-items:center;min-height:100vh;color:var(--ink)}
+.phone{width:390px;height:800px;max-height:100vh;background:#fff;border-radius:44px;position:relative;overflow:hidden;box-shadow:0 0 0 9px #101010,0 30px 70px #0004}
+.status{position:absolute;top:0;left:0;right:0;height:46px;z-index:30;display:flex;justify-content:space-between;align-items:center;padding:6px 30px 0;font-size:14px;font-weight:600;pointer-events:none}
+.notch{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:96px;height:28px;background:#000;border-radius:20px;z-index:31}
+.screen{position:absolute;inset:0;padding:70px 28px 100px;overflow-y:auto;opacity:0;visibility:hidden;transform:translateY(14px) scale(.99);transition:opacity .35s var(--ease),transform .45s var(--ease),visibility 0s .35s;scrollbar-width:none}
+.screen::-webkit-scrollbar{display:none}
+.screen.active{opacity:1;visibility:visible;transform:none;transition:opacity .4s var(--ease),transform .5s var(--ease)}
+.brand{color:var(--green);font-weight:700;font-size:28px;text-align:center;letter-spacing:.3px}
+.stagger>*{opacity:0;transform:translateY(12px)}
+.active .stagger>*{animation:rise .55s var(--ease) forwards;animation-delay:calc(var(--i,0)*70ms)}
+@keyframes rise{to{opacity:1;transform:none}}
+h2{color:var(--green);font-size:20px;font-weight:600}
+.sub{color:var(--green);font-size:12px;opacity:.85}
+.field{margin-top:18px}
+.field label{display:block;color:var(--green);font-size:15px;margin-bottom:6px;font-weight:500}
+.field input,.field select{width:100%;height:42px;padding:0 14px;border:1.2px solid var(--green2);border-radius:12px;font:inherit;font-size:14px;background:#fff;outline:0;transition:box-shadow .25s,border-color .25s}
+.field input:focus,.field select:focus{box-shadow:0 0 0 4px #2f7a2f22;border-color:var(--green)}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;margin:30px auto 0;min-width:120px;height:40px;padding:0 30px;border:0;border-radius:999px;background:var(--ink);color:#fff;font:inherit;font-size:14px;font-weight:500;cursor:pointer;transition:transform .2s var(--ease),box-shadow .2s,opacity .2s;box-shadow:0 6px 16px #12121f33}
+.btn:hover{transform:translateY(-2px);box-shadow:0 10px 22px #12121f44}.btn:active{transform:scale(.96)}
+.btn[disabled]{opacity:.7;pointer-events:none}
+.spin{width:14px;height:14px;border:2px solid #fff6;border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite;display:none}
+.btn.load .spin{display:block}@keyframes sp{to{transform:rotate(360deg)}}
+.link{display:block;text-align:center;margin-top:16px;font-size:13px;color:var(--green);cursor:pointer;background:none;border:0;font-family:inherit;width:100%}
+.link:hover{text-decoration:underline}
+/* splash */
+#splash{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0}
+#splash svg{width:104px;animation:pop 1s var(--ease)}#splash .brand{font-size:34px;margin-top:6px;animation:rise .9s .2s var(--ease) both}
+@keyframes pop{from{opacity:0;transform:scale(.7) rotate(-6deg)}to{opacity:1;transform:none}}
+.banner{background:var(--green);color:#fff;font-size:13px;line-height:1.4;padding:11px 14px;border-radius:10px;text-align:center;box-shadow:0 6px 14px #1d5c1d33}
+.hello{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.avatar{width:36px;height:36px;border-radius:50%;background:#efe3f7;display:grid;place-items:center;color:#9a6bbd}
+.hello b{font-size:13px;font-weight:600;display:block}.hello span{font-size:12px;color:#9a6bbd}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:20px 0 26px}
+.tile{height:62px;border-radius:14px;background:var(--gray);display:grid;place-items:center;color:var(--teal);cursor:pointer;transition:transform .25s var(--ease),background .25s}
+.tile:hover{transform:translateY(-4px);background:#dfe9e2}.tile:active{transform:scale(.94)}
+.remind{background:var(--gray);border-radius:16px;padding:16px 16px 22px;text-align:center}
+.remind .t{background:var(--green);color:#fff;border-radius:10px;padding:9px;font-weight:500;font-size:14px}
+.arab{font-family:Amiri,serif;font-size:24px;direction:rtl;line-height:1.7;margin-top:22px}
+.latin{font-size:12px;font-weight:600;margin-top:6px}.tr{font-size:12px;margin-top:8px;color:#333}
+.skel{background:linear-gradient(90deg,#ddd,#efefef,#ddd);background-size:200%;animation:sh 1.2s infinite;border-radius:6px;height:14px;margin:10px auto;width:70%}
+@keyframes sh{to{background-position:-200%}}
+/* nav */
+.nav{position:absolute;bottom:0;left:0;right:0;height:84px;padding:0 18px 14px;background:#fffffff2;backdrop-filter:blur(8px);display:flex;justify-content:space-around;align-items:center;z-index:20;transform:translateY(100%);transition:transform .5s var(--ease)}
+.nav.show{transform:none}
+.nav button{border:0;background:none;color:#222;width:48px;height:48px;border-radius:14px;display:grid;place-items:center;cursor:pointer;opacity:.55;transition:all .25s var(--ease);position:relative}
+.nav button.on{opacity:1;transform:translateY(-3px)}
+.nav button.on::after{content:"";position:absolute;bottom:2px;width:5px;height:5px;border-radius:50%;background:var(--green)}
+.top{display:flex;align-items:center;gap:6px;color:var(--green);font-weight:500;font-size:14px;margin-bottom:14px;cursor:pointer}
+.preview{height:310px;border-radius:16px;background:var(--gray);display:grid;place-items:center;overflow:hidden;color:#888;font-size:13px;text-align:center;transition:all .3s}
+.preview img{width:100%;height:100%;object-fit:contain;animation:rise .5s both}
+.preview video{width:100%;height:100%;object-fit:cover}
+#k_prev{position:relative}
+.swap{position:absolute;top:10px;right:10px;width:38px;height:38px;border-radius:50%;border:0;background:#0007;color:#fff;display:grid;place-items:center;cursor:pointer;backdrop-filter:blur(4px);transition:transform .25s var(--ease)}
+.swap:hover{transform:rotate(90deg)}.swap:active{transform:scale(.9)}
+.pw{position:relative}.field .pw input{padding-right:46px}
+.eye{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:34px;height:34px;border:0;background:none;border-radius:50%;color:#6d7d6d;display:grid;place-items:center;cursor:pointer;transition:color .2s,background .2s}
+.eye:hover{color:var(--green);background:#2f7a2f14}.eye svg{width:20px;height:20px}
+.rules{display:flex;flex-wrap:wrap;gap:4px 12px;margin-top:8px;font-size:11.5px;color:#8a8a8a}
+.rules span{display:flex;align-items:center;gap:4px;transition:color .2s}
+.rules span::before{content:"○"}.rules span.ok{color:var(--green)}.rules span.ok::before{content:"✓"}
+.actions{display:flex;justify-content:center;gap:18px;margin-top:18px}
+.circle{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;cursor:pointer;color:var(--ink);transition:transform .25s var(--ease)}
+.circle:hover{transform:scale(1.08)}.circle:active{transform:scale(.92)}
+.circle.alt{background:var(--gray)}.circle input{display:none}
+/* list */
+.item{display:flex;gap:12px;background:#f6f6f6;border-radius:14px;padding:10px;margin-top:12px;cursor:pointer;transition:transform .2s var(--ease)}
+.item:hover{transform:translateX(4px)}
+.item img{width:58px;height:58px;border-radius:10px;object-fit:cover}
+.item .arab{font-size:18px;margin:0;text-align:right}.item small{color:#777;font-size:11px}
+.score{display:inline-block;background:var(--green);color:#fff;border-radius:999px;font-size:11px;padding:2px 9px;margin-left:6px}
+.empty{text-align:center;color:#888;margin-top:60px;font-size:14px}
+/* label fitur & tombol galeri/pindai */
+.cell{display:flex;flex-direction:column;align-items:center;gap:7px;font-size:10.5px;font-weight:600;text-align:center;line-height:1.2}
+.cell .tile{width:100%}
+.act{display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;font-size:12px;font-weight:600}
+.act input{display:none}
+/* pilih dari galeri */
+#galeri{padding-bottom:170px}
+.gal{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px}
+.gtile{aspect-ratio:1;border-radius:12px;background:var(--gray);display:grid;place-items:center;color:var(--ink);cursor:pointer;position:relative;overflow:hidden;border:2px solid transparent;transition:transform .2s var(--ease),border-color .2s}
+.gtile:active{transform:scale(.95)}.gtile input{display:none}
+.gtile.ph{background:#f1ead9}.gtile.ph img{width:100%;height:100%;object-fit:cover}
+.gtile.sel{border-color:var(--green2)}
+.chk{position:absolute;top:5px;right:5px;width:20px;height:20px;border-radius:50%;background:var(--green);color:#fff;display:none;place-items:center}
+.gtile.sel .chk{display:grid}
+.selbar{position:absolute;left:20px;right:20px;bottom:98px;z-index:21;background:var(--teal);color:#fff;border-radius:16px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 10px 24px #0004;opacity:0;visibility:hidden;transform:translateY(16px);transition:.4s var(--ease)}
+.selbar.show{opacity:1;visibility:visible;transform:none}
+.selbar b{display:block;font-size:13px;font-weight:600}.selbar small{font-size:11px;opacity:.8}
+.pill{display:flex;align-items:center;gap:8px;background:var(--beige);color:#2b2112;border:0;border-radius:999px;padding:9px 16px;font:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:transform .2s var(--ease)}
+.pill:active{transform:scale(.95)}.pill[disabled]{opacity:.7;pointer-events:none}
+.pill .spin{border-color:#2b211255;border-top-color:#2b2112}.pill.load .spin{display:block}
+/* hasil koreksi */
+.rimg{height:170px;border-radius:14px;background:var(--gray);display:grid;place-items:center;overflow:hidden}
+.rimg img{width:100%;height:100%;object-fit:contain}
+.rcard{display:flex;align-items:center;gap:14px;background:#fdf8ec;border-radius:14px;padding:12px 14px;margin-top:14px;box-shadow:0 4px 12px #0000000d}
+.ring{--p:0;width:58px;height:58px;border-radius:50%;flex:none;display:grid;place-items:center;position:relative;background:conic-gradient(var(--green2) calc(var(--p)*1%),#e6e0d0 0)}
+.ring::before{content:"";position:absolute;inset:6px;background:#fdf8ec;border-radius:50%}
+.ring span{position:relative;font-weight:600;font-size:16px}
+.rcard b{display:block;font-size:14px;font-weight:600}.rcard small{font-size:12px;color:#555}
+.rhead{color:var(--green);font-weight:500;font-size:13px;margin:18px 2px 8px}
+.mcard{background:#fdf8ec;border-radius:14px;padding:12px 14px;margin-bottom:10px}
+.mrow{display:flex;align-items:center;justify-content:center;gap:12px;direction:rtl;font-family:Amiri,serif;font-size:22px;line-height:1.6}
+.mrow .bad{color:#c0392b;text-decoration:line-through}.mrow .ok{color:var(--green);font-weight:700}
+.mcard p{font-size:12px;color:#555;margin-top:6px;line-height:1.45}
+.cat{display:inline-block;margin-top:6px;font-size:10.5px;color:var(--green);background:#e6efe6;border-radius:999px;padding:2px 9px}
+.note{font-size:12.5px;color:#555;margin-top:14px;line-height:1.5}
+/* laporan peningkatan */
+.scorecard{background:#5c8a7f;color:#fff;border-radius:14px;padding:12px 16px;margin-top:16px}
+.scorecard small{font-size:12px;opacity:.9}.scorecard b{display:block;font-size:28px;font-weight:600;line-height:1.2}
+.chart{display:flex;align-items:flex-end;justify-content:space-around;gap:16px;height:230px;margin-top:22px;padding:0 6px}
+.bar{--s:0;flex:1;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:flex-end}
+.bar em{font-style:normal;font-size:11px;color:#444;margin-bottom:4px}
+.bar i{display:block;width:100%;max-width:48px;background:#5c8a7f;border-radius:6px 6px 0 0;height:calc((100% - 56px)*var(--s));transition:height .9s var(--ease)}
+.bar span{margin-top:6px;height:30px;font-size:10.5px;font-weight:600;line-height:1.2;text-align:center}
+/* toast */
+.toast{position:absolute;top:56px;left:50%;transform:translate(-50%,-30px);background:#222;color:#fff;padding:10px 18px;border-radius:999px;font-size:13px;z-index:60;opacity:0;transition:.4s var(--ease);max-width:90%;text-align:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}.toast.bad{background:#b3261e}
+.card{background:var(--gray);border-radius:16px;padding:18px;line-height:1.7;font-size:14px}
+@media(max-width:480px){body{background:#fff}.phone{width:100vw;height:100vh;border-radius:0;box-shadow:none}.notch{display:none}}
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="notch"></div>
+  <div class="status"><span>9:41</span><span></span></div>
+  <div class="toast" id="toast"></div>
+
+  <section class="screen active" id="splash">
+    <svg viewBox="0 0 100 110" fill="none" stroke="#d8bf99" stroke-width="5" stroke-linecap="round">
+      <rect x="8" y="6" width="84" height="84" rx="42"/><rect x="18" y="16" width="64" height="64" rx="32"/><rect x="28" y="26" width="44" height="44" rx="22"/>
+      <path d="M62 66l24 30M52 70l24 30"/></svg>
+    <div class="brand">QalaMu</div>
+  </section>
+
+  <section class="screen" id="login"><div class="stagger">
+    <div class="brand" style="--i:0;margin:20px 0 50px">QalaMu</div>
+    <div style="--i:1"><h2>Ahlan Wasahlan!</h2><div class="sub">Masuk untuk melanjutkan</div></div>
+    <div class="field" style="--i:2"><label>Email</label><input id="l_email" type="email" autocomplete="email"></div>
+    <div class="field" style="--i:3"><label>Kata Sandi</label><div class="pw"><input id="l_pass" type="password" autocomplete="current-password"><button type="button" class="eye" data-i="eye" onclick="togglePw('l_pass')" aria-label="Lihat kata sandi"></button></div></div>
+    <button class="btn" style="--i:4" id="b_login" onclick="doLogin()"><i class="spin"></i>Masuk</button>
+    <button class="link" style="--i:5" onclick="go('register')">Belum memiliki akun</button></div></section>
+
+  <section class="screen" id="register"><div class="stagger">
+    <div class="brand" style="--i:0;margin:20px 0 40px">QalaMu</div>
+    <h2 style="--i:1">Bikin Akun</h2>
+    <div class="field" style="--i:2"><label>Nama</label><input id="r_name" autocomplete="name"></div>
+    <div class="field" style="--i:3"><label>Email</label><input id="r_email" type="email"></div>
+    <div class="field" style="--i:4"><label>Kata Sandi</label><div class="pw"><input id="r_pass" type="password" autocomplete="new-password" oninput="checkPw(this.value)"><button type="button" class="eye" data-i="eye" onclick="togglePw('r_pass')" aria-label="Lihat kata sandi"></button></div>
+      <div class="rules" id="pw_rules"><span data-r="len">Min. 8 karakter</span><span data-r="up">1 huruf besar</span><span data-r="num">1 angka</span></div></div>
+    <button class="btn" style="--i:5" id="b_reg" onclick="doRegister()"><i class="spin"></i>Daftar</button>
+    <button class="link" style="--i:6" onclick="go('login')">Sudah punya akun? Masuk</button></div></section>
+
+  <section class="screen" id="profile2"><div class="stagger">
+    <div class="brand" style="--i:0;margin:20px 0 50px">QalaMu</div>
+    <div class="field" style="--i:1"><label>Nama Pengguna</label><input id="p_user"></div>
+    <div class="field" style="--i:2"><label>Jenis Kelamin</label><select id="p_gender"><option value="perempuan">Perempuan</option><option value="laki-laki">Laki-laki</option></select></div>
+    <button class="btn" style="--i:3;margin-left:0" id="b_prof" onclick="doProfile()"><i class="spin"></i>Selanjutnya</button></div></section>
+
+  <section class="screen" id="dashboard"><div class="stagger">
+    <div class="hello" style="--i:0"><div class="avatar" data-i="user"></div><div><b>Assalamu'alaikum</b><span id="d_name">…</span></div></div>
+    <div class="banner" style="--i:1">Tulis, koreksi, dan tingkatkan kemampuan Bahasa Arab kamu bersama QalaMu!</div>
+    <div class="grid" style="--i:2">
+      <div class="cell"><div class="tile" data-i="pencil" onclick="go('koreksi')"></div>Koreksi Tulisan</div>
+      <div class="cell"><div class="tile" data-i="search" onclick="go('koreksi')"></div>Koreksi Harakat</div>
+      <div class="cell"><div class="tile" data-i="book" onclick="toast('Fitur segera hadir')"></div>Kamus</div>
+      <div class="cell"><div class="tile" data-i="edit" onclick="go('koreksi')"></div>Latihan</div>
+      <div class="cell"><div class="tile" data-i="clock" onclick="go('riwayat')"></div>Riwayat</div></div>
+    <div class="remind" style="--i:3"><div class="t">Pengingat hari ini</div>
+      <div id="d_rem"><div class="skel" style="margin-top:30px"></div><div class="skel"></div></div></div></div></section>
+
+  <section class="screen" id="koreksi"><div class="stagger">
+    <div class="top" style="--i:0" onclick="go('dashboard')"><span data-i="back"></span>Koreksi tulisan</div>
+    <div class="banner" style="--i:1">Silakan foto tulisan yang akan dikoreksi!</div>
+    <div class="preview" style="--i:2;margin-top:16px" id="k_prev">Belum ada foto</div>
+    <div class="actions" style="--i:3">
+      <label class="act"><span class="circle" data-i="image"></span>Galeri<input type="file" accept="image/*" multiple onchange="addGallery(this)"></label>
+      <label class="act" onclick="pindai(event)"><span class="circle alt" data-i="camera"></span><span id="pin_t">Pindai</span><input type="file" accept="image/*" capture="environment" onchange="doCorrect(this)"></label>
+    </div></div></section>
+
+  <section class="screen" id="galeri"><div class="stagger">
+    <div class="top" style="--i:0" onclick="go('koreksi')"><span data-i="back"></span>Koreksi tulisan</div>
+    <div class="banner" style="--i:1">Pilih foto tulisan arab</div>
+    <div class="gal" style="--i:2" id="g_grid"></div></div></section>
+
+  <section class="screen" id="hasil"><div class="stagger">
+    <div class="top" style="--i:0" onclick="backFromResult()"><span data-i="back"></span>Koreksi tulisan</div>
+    <div style="--i:1" id="h_body"></div></div></section>
+
+  <section class="screen" id="riwayat"><div class="top" style="cursor:default">Riwayat koreksi</div><div id="h_list"></div></section>
+
+  <section class="screen" id="profil"><div class="stagger">
+    <div class="top" style="--i:0" onclick="go('dashboard')"><span data-i="back"></span>Profil</div>
+    <div class="hello" style="--i:1;margin-bottom:0"><div class="avatar" data-i="user"></div><div><b id="pr_name">…</b><span>Laporan peningkatan</span></div></div>
+    <div class="scorecard" style="--i:2"><small>Skor rata-rata</small><b id="pr_avg">–</b></div>
+    <div style="--i:3" id="pr_chart"></div>
+    <button class="btn" style="--i:4" onclick="logout()">Keluar</button></div></section>
+
+  <nav class="nav" id="nav">
+    <button data-s="dashboard" data-i="home" onclick="go('dashboard')"></button>
+    <button data-s="koreksi" data-i="scan" onclick="go('koreksi')"></button>
+    <button data-s="riwayat" data-i="clock" onclick="go('riwayat')"></button>
+    <button data-s="profil" data-i="user" onclick="go('profil')"></button>
+  </nav>
+
+  <div class="selbar" id="selbar"><div><b id="sb_t">1 foto dipilih</b><small>Tulisan terbaca jelas</small></div>
+    <button class="pill" id="b_gal" onclick="correctSelected()"><i class="spin"></i>Koreksi Tulisan</button></div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const P={home:'<path d="M3 11l9-8 9 8v9a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1z"/>',
+scan:'<path d="M4 8V5a1 1 0 011-1h3M16 4h3a1 1 0 011 1v3M20 16v3a1 1 0 01-1 1h-3M8 20H5a1 1 0 01-1-1v-3M4 12h16"/>',
+clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+user:'<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>',
+pencil:'<path d="M4 20h4L19 9l-4-4L4 16zM13 7l4 4"/>',
+search:'<circle cx="11" cy="11" r="6"/><path d="M20 20l-4-4M9 11h4"/>',
+book:'<path d="M5 4h11a3 3 0 013 3v13H8a3 3 0 01-3-3zM8 8h7M8 12h7"/>',
+edit:'<path d="M4 20h16M6 16l1-4 9-9 3 3-9 9z"/>',
+image:'<rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="1.5"/><path d="M4 18l5-5 4 4 3-3 4 4"/>',
+camera:'<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>',
+back:'<path d="M15 5l-7 7 7 7"/>',
+check:'<path d="M5 12l5 5 9-10"/>',
+flip:'<path d="M20 12a8 8 0 01-14 5.3M4 12A8 8 0 0118 6.7M18 3v4h-4M6 21v-4h4"/>',
+eye:'<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+eyeoff:'<path d="M3 3l18 18M10.6 5.1A9.7 9.7 0 0112 5c6.4 0 10 7 10 7a17 17 0 01-3.2 4M6.6 6.6A16.6 16.6 0 002 12s3.6 7 10 7c1.7 0 3.2-.4 4.5-1M9.9 9.9a3 3 0 004.2 4.2"/>'};
+const ico=(s,z=24)=>`<svg width="${z}" height="${z}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${P[s]}</svg>`;
+document.querySelectorAll('[data-i]').forEach(e=>{const s=e.dataset.i,z=e.classList.contains('tile')?26:(e.classList.contains('avatar')?20:24);
+e.insertAdjacentHTML('afterbegin',ico(s,z))});
+
+let token=localStorage.getItem('qm_token'),tt;
+function toast(m,bad){const t=$('toast');t.textContent=m;t.className='toast show'+(bad?' bad':'');clearTimeout(tt);tt=setTimeout(()=>t.className='toast',2800)}
+async function api(path,o={}){o.headers=Object.assign({},o.headers,token?{Authorization:'Bearer '+token}:{});
+ if(o.body&&!(o.body instanceof FormData)){o.headers['Content-Type']='application/json';o.body=JSON.stringify(o.body)}
+ const r=await fetch(path,o),d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.message||'Terjadi kesalahan');return d}
+async function busy(id,fn){const b=$(id);b.classList.add('load');b.disabled=true;try{await fn()}catch(e){toast(e.message,1)}finally{b.classList.remove('load');b.disabled=false}}
+function go(s){if(s!=='koreksi'&&camStream){stopCam();resetPin()}
+ document.querySelectorAll('.screen').forEach(e=>e.classList.remove('active'));$(s).classList.add('active');
+ $(s).scrollTop=0;$('nav').classList.toggle('show',['dashboard','koreksi','galeri','hasil','riwayat','profil'].includes(s));
+ const navKey=({galeri:'koreksi',hasil:'koreksi'})[s]||s;
+ document.querySelectorAll('#nav button').forEach(n=>n.classList.toggle('on',n.dataset.s===navKey));
+ $('selbar').classList.remove('show');
+ if(s==='login'||s==='register')['l_pass','r_pass'].forEach(id=>togglePw(id,true));
+ if(s==='dashboard')loadDashboard();if(s==='riwayat')loadHistory();if(s==='profil')loadProfile();if(s==='galeri')renderGallery()}
+function checkPw(v){const r={len:v.length>=8,up:/[A-Z]/.test(v),num:/[0-9]/.test(v)};
+ document.querySelectorAll('#pw_rules span').forEach(s=>s.classList.toggle('ok',r[s.dataset.r]))}
+function togglePw(id,hide){const i=$(id),b=i.nextElementSibling,show=hide?false:i.type==='password';
+ i.type=show?'text':'password';b.innerHTML=ico(show?'eyeoff':'eye',20);b.setAttribute('aria-label',show?'Sembunyikan kata sandi':'Lihat kata sandi')}
+const esc=s=>String(s??'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const save=d=>{token=d.token;localStorage.setItem('qm_token',token)};
+const doLogin=()=>busy('b_login',async()=>{const d=await api('/api/auth/login',{method:'POST',body:{email:$('l_email').value,password:$('l_pass').value}});save(d);go(d.user.profile_complete?'dashboard':'profile2')});
+const doRegister=()=>busy('b_reg',async()=>{const d=await api('/api/auth/register',{method:'POST',body:{name:$('r_name').value,email:$('r_email').value,password:$('r_pass').value}});save(d);go('profile2')});
+const doProfile=()=>busy('b_prof',async()=>{await api('/api/profile',{method:'PUT',body:{username:$('p_user').value,gender:$('p_gender').value}});toast('Profil tersimpan');go('dashboard')});
+async function loadDashboard(){try{const m=await api('/api/me');$('d_name').textContent=m.username||m.name;const r=await api('/api/reminder/today');
+ $('d_rem').innerHTML=`<div class="arab">${esc(r.arabic)}</div><div class="latin">${esc(r.latin)}</div><div class="tr">"${esc(r.translation)}"</div>`}catch{logout()}}
+let gallery=[],gSel=-1,resultFrom='koreksi',histCache=[];
+const verdict=n=>n>=95?'Sempurna':n>=75?'Hampir sempurna':n>=50?'Cukup baik':'Perlu banyak latihan';
+function renderResult(r){
+ const m=r.mistakes||[],hasW=Number.isFinite(r.total_words)&&Number.isFinite(r.correct_words);
+ $('h_body').innerHTML=`<div class="rimg"><img data-src="${r.image_url}" alt=""></div>
+ <div class="rcard"><div class="ring" style="--p:${Number(r.score)||0}"><span>${esc(r.score)}</span></div>
+ <div><b>${verdict(Number(r.score)||0)}</b>${hasW?`<small>${esc(r.correct_words)} dari ${esc(r.total_words)} kata sudah tepat</small>`:''}</div></div>`
+ +(m.length?`<div class="rhead">Perlu diperbaiki (${m.length})</div>`+m.map(x=>`<div class="mcard"><div class="mrow"><span class="bad">${esc(x.wrong)}</span><span>←</span><span class="ok">${esc(x.correct)}</span></div><p>${esc(x.explanation)}</p><span class="cat">${esc(x.category)}</span></div>`).join(''):(hasW?'<div class="rhead">Semua kata sudah tepat.</div>':''))
+ +(r.feedback?`<p class="note">${esc(r.feedback)}</p>`:'')}
+function showResult(r,from){resultFrom=from||'koreksi';renderResult(r);go('hasil');loadImgs($('h_body'))}
+const backFromResult=()=>go(resultFrom==='riwayat'?'riwayat':'koreksi');
+let camStream=null,camFallback=false;
+function resetPin(){$('pin_t').textContent='Pindai';if($('k_vid'))$('k_prev').textContent='Belum ada foto'}
+function stopCam(){if(camStream)camStream.getTracks().forEach(t=>t.stop());camStream=null}
+let camFacing='environment';
+const openStream=f=>navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:f}},audio:false});
+async function startCam(){
+ try{camStream=await openStream(camFacing)}
+ catch{camFallback=true;toast('Kamera tidak bisa dibuka. Ketuk Pindai sekali lagi untuk memakai kamera bawaan.',1);return}
+ await showCam()}
+async function showCam(){
+ $('k_prev').innerHTML='<video id="k_vid" autoplay playsinline muted></video>';$('k_vid').srcObject=camStream;
+ $('k_vid').style.transform=camFacing==='user'?'scaleX(-1)':'';$('pin_t').textContent='Ambil foto';
+ // tombol ganti kamera hanya muncul bila perangkat punya lebih dari satu kamera
+ try{const n=(await navigator.mediaDevices.enumerateDevices()).filter(d=>d.kind==='videoinput').length;
+  if(n>1&&$('k_vid'))$('k_prev').insertAdjacentHTML('beforeend',`<button class="swap" title="Ganti kamera" onclick="switchCam()">${ico('flip',20)}</button>`)}catch{}}
+async function switchCam(){
+ const next=camFacing==='environment'?'user':'environment';stopCam();
+ try{camStream=await openStream(next);camFacing=next}
+ catch{toast('Tidak bisa berpindah kamera',1);try{camStream=await openStream(camFacing)}catch{resetPin();return}}
+ await showCam()}
+function shot(){const v=$('k_vid');if(!v||!v.videoWidth)return;
+ const c=document.createElement('canvas');c.width=v.videoWidth;c.height=v.videoHeight;c.getContext('2d').drawImage(v,0,0);
+ c.toBlob(async b=>{stopCam();resetPin();if(!b)return toast('Gagal mengambil foto',1);toast('Memeriksa tulisan…');
+  try{showResult(await runCorrection(new File([b],'scan.jpg',{type:'image/jpeg'})),'koreksi')}catch(e){toast(e.message,1)}},'image/jpeg',.92)}
+// Pindai: buka kamera langsung (perlu HTTPS atau localhost); bila tidak tersedia, pakai input file bawaan
+function pindai(e){
+ if(camStream){e.preventDefault();return shot()}
+ if(camFallback||!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia||!window.isSecureContext)return;
+ e.preventDefault();startCam()}
+async function runCorrection(file){$('k_prev').innerHTML=`<img src="${URL.createObjectURL(file)}">`;
+ const fd=new FormData();fd.append('image',file);return api('/api/corrections',{method:'POST',body:fd})}
+async function doCorrect(inp){const f=inp.files[0];if(!f)return;toast('Memeriksa tulisan…');
+ try{showResult(await runCorrection(f),'koreksi')}catch(e){toast(e.message,1)}inp.value=''}
+function renderGallery(){
+ $('g_grid').innerHTML=`<label class="gtile">${ico('camera',26)}<input type="file" accept="image/*" capture="environment" onchange="addGallery(this)"></label>`
+ +`<label class="gtile">${ico('image',26)}<input type="file" accept="image/*" multiple onchange="addGallery(this)"></label>`
+ +gallery.map((g,i)=>`<div class="gtile ph${i===gSel?' sel':''}" onclick="selGallery(${i})"><img src="${g.url}" alt=""><i class="chk">${ico('check',13)}</i></div>`).join('');
+ $('sb_t').textContent='1 foto dipilih';
+ $('selbar').classList.toggle('show',gSel>=0&&$('galeri').classList.contains('active'))}
+function addGallery(inp){const fs=[...inp.files].filter(f=>f.type.startsWith('image/'));inp.value='';if(!fs.length)return;
+ fs.forEach(f=>gallery.push({file:f,url:URL.createObjectURL(f)}));gSel=gallery.length-1;go('galeri')}
+function selGallery(i){gSel=gSel===i?-1:i;renderGallery()}
+const correctSelected=()=>busy('b_gal',async()=>{const g=gallery[gSel];if(!g)return;toast('Memeriksa tulisan…');showResult(await runCorrection(g.file),'koreksi')});
+async function loadImgs(root){root.querySelectorAll('img[data-src]').forEach(async im=>{try{const r=await fetch(im.dataset.src,{headers:{Authorization:'Bearer '+token}});if(r.ok)im.src=URL.createObjectURL(await r.blob())}catch{}})}
+async function loadHistory(){let l;try{l=await api('/api/corrections')}catch(e){$('h_list').innerHTML='<div class="empty">Gagal memuat riwayat.</div>';toast(e.message,1);return}
+ histCache=l;$('h_list').innerHTML=l.length?l.map((r,i)=>
+ `<div class="item" style="animation:rise .5s ${i*60}ms both" onclick="showResult(histCache[${i}],'riwayat')"><img data-src="${r.image_url}"><div style="flex:1"><div class="arab">${esc(r.corrected_text)}</div><small>${esc(r.created_at)}</small><span class="score">${esc(r.score)}</span></div></div>`).join(''):'<div class="empty">Belum ada riwayat koreksi.<br>Mulai dari tab kamera ya!</div>';loadImgs($('h_list'))}
+async function loadProfile(){try{const m=await api('/api/me');$('pr_name').textContent=m.name;
+ const r=await api('/api/report');$('pr_avg').textContent=r.average_score??'–';
+ const has=r.categories.some(c=>c.score!==null);
+ $('pr_chart').innerHTML=has?`<div class="chart">${r.categories.map(c=>`<div class="bar"><em>${c.score??''}</em><i></i><span>${esc(c.name)}</span></div>`).join('')}</div>`:'<div class="empty" style="margin-top:40px">Belum ada data.<br>Mulai koreksi tulisan dulu ya!</div>';
+ requestAnimationFrame(()=>requestAnimationFrame(()=>$('pr_chart').querySelectorAll('.bar').forEach((b,i)=>b.style.setProperty('--s',(r.categories[i].score||0)/100))))
+}catch(e){$('pr_chart').innerHTML='<div class="empty" style="margin-top:40px">Gagal memuat laporan.</div>';toast(e.message,1)}}
+function logout(){token=null;localStorage.removeItem('qm_token');go('login')}
+setTimeout(async()=>{if(!token)return go('login');try{const m=await api('/api/me');if(!m.username||!m.gender)return go('profile2')}catch{}go('dashboard')},1700);
+</script>
+</body>
+</html>
