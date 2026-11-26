@@ -41,7 +41,21 @@ CREATE TABLE IF NOT EXISTS reminders (
   translation TEXT NOT NULL,
   source TEXT
 );
+
+CREATE TABLE IF NOT EXISTS videos (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  title TEXT NOT NULL,
+  file_path TEXT,
+  link_url TEXT,
+  mime TEXT,
+  created_by INTEGER REFERENCES users(id) ON DELETE SET NULL,
+  created_at TEXT DEFAULT CURRENT_TIMESTAMP
+);
 `);
+
+// Migrasi: database lama belum punya kolom role. Semua akun lama otomatis menjadi 'user'.
+const userCols = db.prepare('PRAGMA table_info(users)').all().map((c) => c.name);
+if (!userCols.includes('role')) db.exec("ALTER TABLE users ADD COLUMN role TEXT NOT NULL DEFAULT 'user'");
 
 // Migrasi: database lama belum punya kolom rincian hasil koreksi. Data lama tidak disentuh.
 const correctionCols = db.prepare('PRAGMA table_info(corrections)').all().map((c) => c.name);
