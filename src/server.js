@@ -25,6 +25,7 @@ app.use('/api', require('./routes/profile'));
 app.use('/api/reminder', require('./routes/reminder'));
 app.use('/api/corrections', require('./routes/corrections'));
 app.use('/api/report', require('./routes/report'));
+app.use('/api/videos', require('./routes/videos'));
 
 // Alamat /api yang tidak ada menjawab 404
 app.use('/api', (req, res) => res.status(404).json({ message: 'Endpoint tidak ditemukan' }));
@@ -38,7 +39,12 @@ app.use((err, req, res, next) => {
     return res.status(413).json({ message: 'Data terlalu besar' });
   if (err.name === 'MulterError')
     return res.status(400).json({
-      message: err.code === 'LIMIT_FILE_SIZE' ? 'Ukuran foto maksimal 5 MB' : 'Gagal mengunggah file',
+      message:
+        err.code === 'LIMIT_FILE_SIZE'
+          ? req.originalUrl.startsWith('/api/videos')
+            ? `Ukuran video maksimal ${process.env.VIDEO_MAX_MB || 200} MB`
+            : 'Ukuran foto maksimal 5 MB'
+          : 'Gagal mengunggah file',
     });
   if (err.expose) return res.status(400).json({ message: err.message });
   console.error(err);
