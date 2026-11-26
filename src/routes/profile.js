@@ -8,7 +8,7 @@ const USERNAME_RE = /^[A-Za-z0-9._]+$/;
 // Dipakai Dashboard ("Assalamu'alaikum <nama>") & tab Profil
 router.get('/me', auth, (req, res) => {
   const u = db
-    .prepare('SELECT id, name, email, username, gender, created_at FROM users WHERE id = ?')
+    .prepare('SELECT id, name, email, username, gender, role, created_at FROM users WHERE id = ?')
     .get(req.user.id);
   if (!u) return res.status(404).json({ message: 'User tidak ditemukan' });
   res.json(u);
